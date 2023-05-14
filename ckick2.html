@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Button Clicker</title>
+	<script>
+		var count = 0;
+		var interval;
+		var name = "";
+
+		function handleClick() {
+			count++;
+			document.getElementById("count").innerHTML = count;
+
+			if (count <= 5) {
+				interval = 2000; 
+			} else if (count <= 10) {
+				interval = 1000;
+			} else {
+				interval = 500; 
+			}
+
+			setTimeout(function() {
+				document.getElementById("button-container").innerHTML = "You clicked the button " + count + " times!";
+				if (count > 0) {
+					localStorage.setItem(name + "count", count);
+				}
+				showCounts();
+			}, 5000); 
+		}
+
+		function askName() {
+			name = prompt("Please enter your name:");
+			if (name != null && name != "") {
+				var savedCount = localStorage.getItem(name + "count");
+				if (savedCount != null) {
+					count = parseInt(savedCount);
+				} else {
+					count = 0;
+				}
+				document.getElementById("name-container").innerHTML = "Hello " + name + "!";
+				document.getElementById("button-container").innerHTML = "<button onclick=\"handleClick()\">Click Me</button>";
+				document.getElementById("count").innerHTML = count;
+			}
+			showCounts();
+		}
+
+		function reset() {
+			count = 0;
+			document.getElementById("name-container").innerHTML = "<button onclick=\"askName()\">Enter Your Name</button>";
+			document.getElementById("button-container").innerHTML = "";
+			document.getElementById("count").innerHTML = count;
+			showCounts();
+		}
+
+		function showCounts() {
+			var counts = document.getElementById("counts");
+			counts.innerHTML = "";
+			for (var i = 0; i < localStorage.length; i++) {
+				var key = localStorage.key(i);
+				if (key.endsWith("count")) {
+					var name = key.replace("count", "");
+					var count = localStorage.getItem(key);
+					counts.innerHTML += "<div>" + name + "'s count is " + count + "</div>";
+				}
+			}
+		}
+	</script>
+</head>
+<body>
+	<div id="name-container">
+		<button onclick="askName()">Enter Your Name</button>
+	</div>
+	<div id="button-container">
+	</div>
+	<p>Count: <span id="count">0</span></p>
+	<button onclick="reset()">Reset</button>
+	<div id="counts"></div>
+	<script>
+		showCounts();
+	</script>
+</body>
+</html>
